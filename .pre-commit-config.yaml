@@ -1,0 +1,9 @@
+default_install_hook_types:
+#  - pre-push  # if you want to run before a push
+- pre-commit
+repos:
+-   repo: https://github.com/zbuchheit/pre-commit-pulumi
+    rev: v0.3.2
+    hooks:
+    -   id: pulumi-state-check
+        stages: [pre-commit] #add pre-push if desired
