@@ -1,0 +1,5 @@
+config:
+  aws:region: us-west-2
+  my-site:errorDocument: error.html
+  my-site:indexDocument: index.html
+  my-site:path: ./www
