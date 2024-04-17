@@ -1,0 +1,6 @@
+config:
+  azure-native:location: WestUS
+  azure_container-service-on-azure_typescript:appPath: app
+  azure_container-service-on-azure_typescript:containerPort: "80"
+  azure_container-service-on-azure_typescript:cpu: "1"
+  azure_container-service-on-azure_typescript:memory: "2"
