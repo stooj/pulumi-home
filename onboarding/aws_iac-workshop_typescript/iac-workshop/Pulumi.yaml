@@ -1,0 +1,3 @@
+name: aws_iac-workshop_typescript
+runtime: nodejs
+description: AWS Intro to modern IAC
