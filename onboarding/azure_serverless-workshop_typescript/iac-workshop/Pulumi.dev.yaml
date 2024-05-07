@@ -1,4 +1,0 @@
-config:
-  azure_serverless-workshop_ts_iac-workshop:account: c01ab8082e05
-  azure_serverless-workshop_ts_iac-workshop:container: html
-  azure_serverless-workshop_ts_iac-workshop:resourceGroup: my-group
