@@ -1,0 +1,4 @@
+config:
+  azure_serverless-workshop_ts_iac-workshop:account: 4f07139eb04a
+  azure_serverless-workshop_ts_iac-workshop:container: htmlprod
+  azure_serverless-workshop_ts_iac-workshop:resourceGroup: my-group-prod
