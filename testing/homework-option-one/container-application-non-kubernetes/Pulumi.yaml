@@ -1,0 +1,7 @@
+name: homework-1-container-application-non-kubernetes
+runtime: go
+description: Testing homework option 1 for Phil
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: container-azure-go
