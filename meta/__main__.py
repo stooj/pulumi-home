@@ -1,3 +1,3 @@
 """Pulumi working environment for support"""
 
-from gcp import projects, services
+from gcp import auth, projects, services
