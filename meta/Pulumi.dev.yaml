@@ -1,0 +1,6 @@
+---
+environment:
+  - pulumi-support
+config:
+  azure-native:location: WestUS2
+  meta:environmentName: pulumi-support

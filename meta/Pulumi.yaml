@@ -1,0 +1,6 @@
+name: meta
+runtime:
+  name: python
+  options:
+    virtualenv: venv
+description: Configuring pulumi working environment
