@@ -1,8 +1,10 @@
 import pulumi_gcp as gcp
 
+from .projects import stoo_project
+
 gdrive_service = gcp.projects.Service(
     "gdrive_api_service",
-    project="pulumi-ce-stoo",
+    project=stoo_project.id,
     service="drive.googleapis.com",
     disable_dependent_services=True,
 )
