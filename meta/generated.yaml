@@ -1,0 +1,12 @@
+values:
+  gcp:
+    login:
+      fn::open::gcp-login:
+        project: 438338752289
+        oidc:
+          workloadPoolId: pulumi-oidc-identity-pool-stooj
+          providerId: pulumi-oidc-provider-stooj
+          serviceAccount: pulumi-oidc-service-acct-stooj@pulumi-ce-team.iam.gserviceaccount.com
+  environmentVariables:
+    GOOGLE_PROJECT: ${gcp.login.project}
+    CLOUDSDK_AUTH_ACCESS_TOKEN: ${gcp.login.accessToken}

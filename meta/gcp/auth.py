@@ -1,8 +1,10 @@
 import getpass
+import json
 import pprint
 
 import pulumi
 import yaml
+from pulumi_command import local
 from pulumi_gcp import iam, organizations, projects, serviceaccount
 
 issuer = "https://api.pulumi.com/oidc"
@@ -12,8 +14,6 @@ pulumi_config = pulumi.Config()
 audience = pulumi.get_organization()
 env_name = pulumi_config.require("environmentName")
 sub_id = f"pulumi:environments:org:{audience}:env:{env_name}"
-
-pulumi_env_config = pulumi.Config("environment")
 
 # Retrieve project details
 project_config = organizations.get_project()
@@ -95,17 +95,21 @@ def create_yaml_structure(args):
     }
 
 
-def print_yaml(args):
+def write_yaml(args):
     yaml_structure = create_yaml_structure(args)
-    yaml_string = yaml.dump(yaml_structure, sort_keys=False)
-    print(yaml_string)
+    with open("generated.yaml", "w") as f:
+        yaml.dump(yaml_structure, f, sort_keys=False)
 
 
-pulumi.Output.all(
+remote_environment_sync = local.Command(
+    "get_environment", create=f"venv/bin/python ./sync_env.py {env_name}"
+)
+
+generated_yaml = pulumi.Output.all(
     project_id,
     identity_provider.workload_identity_pool_id,
     identity_provider.workload_identity_pool_provider_id,
     service_account.email,
-).apply(print_yaml)
+).apply(write_yaml)
 
-pprint.pprint(pulumi_env_config)
+pulumi.export("sync_environments", remote_environment_sync.stdout)
