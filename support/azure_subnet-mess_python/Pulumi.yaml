@@ -1,0 +1,10 @@
+name: azure_subnet-mess_python
+runtime:
+  name: python
+  options:
+    virtualenv: venv
+description: Vnet and subnet
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: ""
