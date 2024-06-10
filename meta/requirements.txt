@@ -1,0 +1,8 @@
+pulumi>=3.0.0,<4.0.0
+pulumi-azure-native>=2.0.0,<3.0.0
+pulumi-azuread>=5.0.0, <6.0.0
+pulumi-azure>=5.0.0, <6.0.0
+pulumi-gcp>=7.0.0,<8.0.0
+pulumi-command>=0.10.0<1.0.0
+pulumi_pulumiservice>=0.20.0,<1.0.0
+PyYAML>=6.0.0,<7.0.0
