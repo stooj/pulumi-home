@@ -1,19 +1,16 @@
 import getpass
-import pprint
 
 import pulumi
-import yaml
+import pulumi_pulumiservice as pulumiservice
 from pulumi_gcp import iam, organizations, projects, serviceaccount
+
+from . import utils
 
 issuer = "https://api.pulumi.com/oidc"
 
 # Retrieve local Pulumi configuration
 pulumi_config = pulumi.Config()
 audience = pulumi.get_organization()
-env_name = pulumi_config.require("environmentName")
-sub_id = f"pulumi:environments:org:{audience}:env:{env_name}"
-
-pulumi_env_config = pulumi.Config("environment")
 
 # Retrieve project details
 project_config = organizations.get_project()
@@ -69,43 +66,31 @@ iam_policy_binding = serviceaccount.IAMBinding(
     ),
 )
 
+# Create an environment for oidc authentication
+gcp_oidc_env = pulumiservice.Environment(
+    "pulumi-support-oidc-gcp",
+    name="pulumi-support-oidc-gcp",
+    organization=audience,
+    opts=pulumi.ResourceOptions(
+        parent=identity_provider, depends_on=[identity_provider]
+    ),
+    yaml=(
+        pulumi.Output.all(
+            project_id,
+            identity_provider.workload_identity_pool_id,
+            identity_provider.workload_identity_pool_provider_id,
+            service_account.email,
+        )
+        .apply(utils.generate_yaml)
+        .apply(pulumi.StringAsset)
+    ),
+)
 
-# Generate Pulumi ESC YAML template
-def create_yaml_structure(args):
-    gcp_project, workload_pool_id, provider_id, service_account_email = args
-    return {
-        "values": {
-            "gcp": {
-                "login": {
-                    "fn::open::gcp-login": {
-                        "project": int(gcp_project),
-                        "oidc": {
-                            "workloadPoolId": workload_pool_id,
-                            "providerId": provider_id,
-                            "serviceAccount": service_account_email,
-                        },
-                    }
-                }
-            },
-            "environmentVariables": {
-                "GOOGLE_PROJECT": "${gcp.login.project}",
-                "CLOUDSDK_AUTH_ACCESS_TOKEN": "${gcp.login.accessToken}",
-            },
-        }
-    }
-
-
-def print_yaml(args):
-    yaml_structure = create_yaml_structure(args)
-    yaml_string = yaml.dump(yaml_structure, sort_keys=False)
-    print(yaml_string)
-
-
-pulumi.Output.all(
-    project_id,
-    identity_provider.workload_identity_pool_id,
-    identity_provider.workload_identity_pool_provider_id,
-    service_account.email,
-).apply(print_yaml)
-
-pprint.pprint(pulumi_env_config)
+prompt = """
+    To use oidc with gcp, add the following to your Pulumi
+    configuration:
+    
+    environment:
+      - {}
+    """
+gcp_oidc_env.name.apply(lambda name: print(prompt.format(name)))
