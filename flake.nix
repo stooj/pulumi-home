@@ -49,6 +49,7 @@
             #     stooj.pulumi-language-yaml
             # ]))
             # # Langauge dependencies
+            pkgs.python3
             # (pkgs.python3.withPackages (ps:
             #   with ps; [
             #     pulumi
@@ -61,6 +62,7 @@
             pkgs.aws-sso-creds
             pkgs.black # Python code formatter
             pkgs.grpc
+            pkgs.openssl
           ];
           shellHook = ''
             export LD_LIBRARY_PATH=${pkgs.lib.makeLibraryPath [pkgs.stdenv.cc.cc]}
