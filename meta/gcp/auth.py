@@ -87,10 +87,7 @@ gcp_oidc_env = pulumiservice.Environment(
 )
 
 prompt = """
-    To use oidc with gcp, add the following to your Pulumi
-    configuration:
-    
-    environment:
-      - {}
+    To use oidc with gcp, add the environment to your pulumi configuration with:
+        `pulumi config env add {}`
     """
 gcp_oidc_env.name.apply(lambda name: print(prompt.format(name)))
