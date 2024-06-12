@@ -1,0 +1,7 @@
+name: azure_static-website_go
+runtime: go
+description: A Go program to deploy a static website on Azure
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: static-website-azure-go
