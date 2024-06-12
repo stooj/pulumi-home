@@ -1,9 +1,10 @@
 import getpass
 
 import pulumi
-import pulumi_azuread as azuread
-import yaml
+import pulumi_pulumiservice as pulumiservice
 from pulumi_azure_native import authorization
+
+from . import utils
 
 # Retrieve current user details
 username = getpass.getuser()
@@ -21,11 +22,12 @@ az_subscription = azure_config.subscription_id
 tenant_id = azure_config.tenant_id
 
 # Create a Microsoft Entra Application
-application = azuread.Application(
-    f"pulumi-oidc-app-reg-{username}",
-    display_name="pulumi-environments-oidc-app",
-    sign_in_audience="AzureADMyOrg",
-)
+# application = azuread.Application(
+#     f"pulumi-oidc-app-reg-{username}",
+#     owners=[azure_config.object_id],
+#     display_name=f"pulumi-oidc-app-reg-{username}",
+#     sign_in_audience="AzureADMyOrg",
+# )
 
 # Create Federated Credentials
 # subject = f"pulumi:environments:org:{audience}:env:{env_name}"
@@ -39,70 +41,51 @@ to configure OIDC for Pulumi ESC.
 
 See: https://github.com/pulumi/pulumi/issues/14509
 """
-subject = f"pulumi:environments:org:{audience}:env:<yaml>"
+# subject = f"pulumi:environments:org:{audience}:env:<yaml>"
 
-federated_identity_credential = azuread.ApplicationFederatedIdentityCredential(
-    "federatedIdentityCredential",
-    application_id=application.object_id.apply(
-        lambda object_id: f"/applications/{object_id}"
-    ),
-    display_name=f"pulumi-env-oidc-fic-{username}",
-    description="Federated credentials for Pulumi ESC",
-    audiences=[audience],
-    issuer=issuer,
-    subject=subject,
-)
+# federated_identity_credential = azuread.ApplicationFederatedIdentityCredential(
+#     f"oidcFederatedIdentityCredential{username.title()}",
+#     application_id=application.object_id.apply(
+#         lambda object_id: f"/applications/{object_id}"
+#     ),
+#     display_name=f"pulumi-env-oidc-fic-{username}",
+#     description="Federated credentials for Pulumi ESC",
+#     audiences=[audience],
+#     issuer=issuer,
+#     subject=subject,
+# )
 
 # Create a Service Principal
-service_principal = azuread.ServicePrincipal(
-    "myserviceprincipal", client_id=application.client_id
-)
+# service_principal = azuread.ServicePrincipal(
+#     f"oidc-service-principal-{username}", client_id=application.client_id
+# )
 
 # Assign the 'Contributor' role to the Service principal at the scope specified
-CONTRIBUTOR = f"/subscriptions/{az_subscription}/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+# CONTRIBUTOR = f"/subscriptions/{az_subscription}/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
 
-role_assignment = authorization.RoleAssignment(
-    "myroleassignment",
-    role_definition_id=CONTRIBUTOR,
-    principal_id=service_principal.id,
-    principal_type="ServicePrincipal",
-    scope=f"/subscriptions/{az_subscription}",
-)
+# role_assignment = authorization.RoleAssignment(
+#     f"oidc-role-assignment-{username}",
+#     role_definition_id=CONTRIBUTOR,
+#     principal_id=service_principal.id,
+#     principal_type="ServicePrincipal",
+#     scope=f"/subscriptions/{az_subscription}",
+# )
 
-print("OIDC configuration complete!")
-print("Copy and paste the following template into your Pulumi ESC environment:")
-print("--------")
-
-
-def create_yaml_structure(args):
-    client_id, tenant_id, subscription_id = args
-    return {
-        "values": {
-            "azure": {
-                "login": {
-                    "fn::open::azure-login": {
-                        "clientId": client_id,
-                        "tenantId": tenant_id,
-                        "subscriptionId": subscription_id,
-                        "oidc": True,
-                    }
-                }
-            },
-            "environmentVariables": {
-                "ARM_USE_OIDC": "true",
-                "ARM_CLIENT_ID": "${azure.login.clientId}",
-                "ARM_TENANT_ID": "${azure.login.tenantId}",
-                "ARM_OIDC_TOKEN": "${azure.login.oidc.token}",
-                "ARM_SUBSCRIPTION_ID": "${azure.login.subscriptionId}",
-            },
-        }
-    }
+#
+# pulumi.Output.all(application.client_id, tenant_id, az_subscription).apply(print_yaml)
 
 
-def print_yaml(args):
-    yaml_structure = create_yaml_structure(args)
-    yaml_string = yaml.dump(yaml_structure, sort_keys=False)
-    print(yaml_string)
+"""
+Pulumi already has OIDC set up for the org, and you need admin permissions to
+make a parallel configuration, so I'm skipping the actual OIDC creation step and
+just configuring the environment.
+"""
 
-
-pulumi.Output.all(application.client_id, tenant_id, az_subscription).apply(print_yaml)
+# yaml = utils.generate_yaml(client_id, tenant_id, az_subscription)
+# # Create an environment for oidc authentication
+# azure_oidc_env = pulumiservice.Environment(
+#     "pulumi-support-oidc-azure",
+#     name="pulumi-support-oidc-gcp",
+#     organization=audience,
+#     yaml=pulumi.StringAsset(yaml),
+# )
