@@ -15,9 +15,7 @@ import com.pulumi.azurenative.storage.enums.SkuName;
 import com.pulumi.azurenative.storage.inputs.ListStorageAccountKeysArgs;
 import com.pulumi.azurenative.storage.inputs.SkuArgs;
 import com.pulumi.azurenative.storage.outputs.EndpointsResponse;
-import com.pulumi.core.Either;
 import com.pulumi.core.Output;
-import com.pulumi.deployment.InvokeOptions;
 
 public class App {
     public static void main(String[] args) {
@@ -53,17 +51,17 @@ public class App {
 
             ctx.export("primaryStorageKey", primaryStorageKey);
             ctx.export("staticEndpoint", storageAccount.primaryEndpoints()
-        .applyValue(EndpointsResponse::web));
+                    .applyValue(EndpointsResponse::web));
         });
     }
 
     private static Output<String> getStorageAccountPrimaryKey(Output<String> resourceGroupName,
-                                                              Output<String> accountName) {
+            Output<String> accountName) {
         return StorageFunctions.listStorageAccountKeys(ListStorageAccountKeysArgs.builder()
-                                                       .resourceGroupName(resourceGroupName)
-                                                       .accountName(accountName)
-                                                       .build())
-            .applyValue(r -> r.keys().get(0).value())
-            .asSecret();
+                .resourceGroupName(resourceGroupName)
+                .accountName(accountName)
+                .build())
+                .applyValue(r -> r.keys().get(0).value())
+                .asSecret();
     }
 }
