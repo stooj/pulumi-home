@@ -1,0 +1,4 @@
+config:
+  gcp:project: pulumi-ce-team
+environment:
+  - pulumi-support
