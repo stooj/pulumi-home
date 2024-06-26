@@ -6,20 +6,23 @@ def create_yaml_structure(args):
     gcp_project, workload_pool_id, provider_id, service_account_email = args
     return {
         "values": {
-            "login": {
-                "fn::open::gcp-login": {
-                    "project": int(gcp_project),
-                    "oidc": {
-                        "workloadPoolId": workload_pool_id,
-                        "providerId": provider_id,
-                        "serviceAccount": service_account_email,
-                    },
+            "gcp": {
+                "login": {
+                    "fn::open::gcp-login": {
+                        "project": int(gcp_project),
+                        "oidc": {
+                            "workloadPoolId": workload_pool_id,
+                            "providerId": provider_id,
+                            "serviceAccount": service_account_email,
+                        },
+                    }
                 }
             }
         },
         "environmentVariables": {
             "GOOGLE_PROJECT": "${gcp.login.project}",
             "CLOUDSDK_AUTH_ACCESS_TOKEN": "${gcp.login.accessToken}",
+            "GOOGLE_OAUTH_ACCESS_TOKEN": "${gcp.login.accessToken}",
         },
     }
 
