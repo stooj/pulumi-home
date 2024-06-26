@@ -1,0 +1,9 @@
+config:
+  gcp:region: europe-southwest1
+  gcp_google-cloud-run_go:appPath: app
+  gcp_google-cloud-run_go:concurrency: "50"
+  gcp_google-cloud-run_go:containerPort: "8080"
+  gcp_google-cloud-run_go:cpu: "1"
+  gcp_google-cloud-run_go:memory: 1Gi
+environment:
+  - pulumi-support
