@@ -1,3 +1,4 @@
----
-environment:
-  - pulumi-support
+config:
+  aws:region: eu-west-2
+  gcp:project: pulumi-ce-team
+  meta:gcp_organization: "248032716856"
