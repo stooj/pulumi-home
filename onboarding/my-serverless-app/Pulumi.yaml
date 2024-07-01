@@ -1,0 +1,7 @@
+name: gcp_full-stack-serverless-app_go
+runtime: go
+description: A Go program to deploy a serverless application on Google Cloud
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: serverless-gcp-go

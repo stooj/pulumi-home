@@ -1,0 +1,7 @@
+config:
+  gcp:project: pulumi-ce-team
+  gcp:region: europe-west3
+  gcp_full-stack-serverless-app_go:appPath: ./app
+  gcp_full-stack-serverless-app_go:errorDocument: error.html
+  gcp_full-stack-serverless-app_go:indexDocument: index.html
+  gcp_full-stack-serverless-app_go:sitePath: ./www
