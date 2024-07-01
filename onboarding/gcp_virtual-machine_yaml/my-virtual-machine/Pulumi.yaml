@@ -1,0 +1,78 @@
+name: gcp_virtual-machine_yaml
+runtime: yaml
+description: A Pulumi YAML program to deploy a virtual machine on Google Cloud
+# Import the program's configuration settings.
+config:
+  instanceTag:
+    type: string
+    default: webserver
+  machineType:
+    type: string
+    default: f1-micro
+  osImage:
+    type: string
+    default: debian-11
+  pulumi:tags:
+    value:
+      pulumi:template: vm-gcp-yaml
+  servicePort:
+    type: string
+    default: "80"
+# Export the instance's name, public IP address, and HTTP URL.
+outputs:
+  ip: ${instance.networkInterfaces[0].accessConfigs[0].natIp}
+  name: ${instance.name}
+  url: http://${instance.networkInterfaces[0].accessConfigs[0].natIp}:${servicePort}
+resources:
+  # Create a firewall allowing inbound access over ports 80 (for HTTP) and 22 (for SSH).
+  firewall:
+    properties:
+      allows:
+        - ports:
+            - "22"
+            - ${servicePort}
+          protocol: tcp
+      direction: INGRESS
+      network: ${network.selfLink}
+      sourceRanges:
+        - 0.0.0.0/0
+      targetTags:
+        - ${instanceTag}
+    type: gcp:compute:Firewall
+  # Create the virtual machine.
+  instance:
+    options:
+      dependsOn:
+        - ${firewall}
+    properties:
+      allowStoppingForUpdate: true
+      bootDisk:
+        initializeParams:
+          image: ${osImage}
+      machineType: ${machineType}
+      metadataStartupScript: ${metadataStartupScript}
+      networkInterfaces:
+        - accessConfigs:
+            - {}
+          network: ${network.id}
+          subnetwork: ${subnet.id}
+      serviceAccount:
+        scopes:
+          - https://www.googleapis.com/auth/cloud-platform
+      tags:
+        - ${instanceTag}
+    type: gcp:compute:Instance
+  # Create a new network for the virtual machine.
+  network:
+    properties:
+      autoCreateSubnetworks: false
+    type: gcp:compute:Network
+  # Create a subnet on the network.
+  subnet:
+    properties:
+      ipCidrRange: 10.0.1.0/24
+      network: ${network.id}
+    type: gcp:compute:Subnetwork
+variables:
+  # Define a script to be run when the VM starts up.
+  metadataStartupScript: "#!/bin/bash\necho '<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"utf-8\">\n    <title>Hello, world!</title>\n</head>\n<body>\n    <h1>Hello, world! \U0001F44B</h1>\n    <p>Deployed with \U0001F49C by <a href=\"https://pulumi.com/\">Pulumi</a>.</p>\n</body>\n</html>' > index.html\nsudo python3 -m http.server ${servicePort} &\n"

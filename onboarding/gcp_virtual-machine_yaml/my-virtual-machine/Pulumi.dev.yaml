@@ -1,0 +1,8 @@
+config:
+  gcp:project: pulumi-ce-team
+  gcp:region: europe-west3
+  gcp:zone: europe-west3-a
+  gcp_virtual-machine_yaml:instanceTag: webserver
+  gcp_virtual-machine_yaml:machineType: f1-micro
+  gcp_virtual-machine_yaml:osImage: debian-11
+  gcp_virtual-machine_yaml:servicePort: "80"
