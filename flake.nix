@@ -49,6 +49,8 @@
             #     stooj.pulumi-language-yaml
             # ]))
             # # Langauge dependencies
+            pkgs.python3
+            pkgs.poetry
             # (pkgs.python3.withPackages (ps:
             #   with ps; [
             #     pulumi
