@@ -33,4 +33,6 @@ bucket_object = s3.BucketObject(
 )
 
 # Export the url of the bucket endpoint
-pulumi.export('bucket_endpoint', pulumi.Output.concat('http://', bucket.website_endpoint))
+pulumi.export(
+    "bucket_endpoint", pulumi.Output.concat("http://", bucket.website_endpoint)
+)
