@@ -1,0 +1,10 @@
+name: savannah
+description: Testing out savannah
+runtime:
+  name: python
+  options:
+    toolchain: poetry
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: aws-python
