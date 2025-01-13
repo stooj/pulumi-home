@@ -34,45 +34,10 @@
         "type": "github"
       }
     },
-    "nixpkgs_2": {
-      "locked": {
-        "lastModified": 1710097495,
-        "narHash": "sha256-B7Ea7q7hU7SE8wOPJ9oXEBjvB89yl2csaLjf5v/7jr8=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "d40e866b1f98698d454dad8f592fe7616ff705a4",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "ref": "nixpkgs-unstable",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
     "root": {
       "inputs": {
         "flake-utils": "flake-utils",
-        "nixpkgs": "nixpkgs",
-        "stooj-nur": "stooj-nur"
-      }
-    },
-    "stooj-nur": {
-      "inputs": {
-        "nixpkgs": "nixpkgs_2"
-      },
-      "locked": {
-        "lastModified": 1712846780,
-        "narHash": "sha256-QPPWQayiy0SLOSM/6tXUbkbrGJZk5kIejwcvVmIqryc=",
-        "owner": "stooj",
-        "repo": "nur-packages",
-        "rev": "d1a5681e3e2fb9ca230501f5933615440a8c0cbc",
-        "type": "github"
-      },
-      "original": {
-        "owner": "stooj",
-        "repo": "nur-packages",
-        "type": "github"
+        "nixpkgs": "nixpkgs"
       }
     },
     "systems": {

@@ -2,18 +2,18 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-    stooj-nur.url = "github:stooj/nur-packages";
+    # stooj-nur.url = "github:stooj/nur-packages";
   };
   outputs = {
     self,
     nixpkgs,
     flake-utils,
-    stooj-nur,
+    # stooj-nur,
   }:
     flake-utils.lib.eachDefaultSystem (
       system: let
         pkgs = nixpkgs.legacyPackages.${system};
-        stooj = stooj-nur.legacyPackages.${system};
+        # stooj = stooj-nur.legacyPackages.${system};
         gdk = pkgs.google-cloud-sdk.withExtraComponents (
           with pkgs.google-cloud-sdk.components; [
             gke-gcloud-auth-plugin
@@ -27,7 +27,11 @@
             pkgs.docker
             # Cloud tools
             pkgs.awscli2
-            pkgs.azure-cli
+            (pkgs.azure-cli.withExtensions
+              [
+                pkgs.azure-cli.extensions.automation
+                pkgs.azure-cli.extensions.portal
+              ])
             pkgs.doctl
             gdk
             pkgs.hcloud
@@ -51,24 +55,25 @@
             # # Langauge dependencies
             pkgs.python3
             pkgs.poetry
-            # (pkgs.python3.withPackages (ps:
-            #   with ps; [
-            #     pulumi
-            #     pulumi-azure-native
-            #     # pulumi-aws
-            #     pulumi-aws-native
-            #   ]))
+            # (pkgs.python3.withPackages(ps: with ps; [
+            #   pulumi
+            #   pulumi-azure-native
+            #   # pulumi-aws
+            #   pulumi-aws-native
+            # ]))
             pkgs.maven
             # Other things
             pkgs.aws-sso-creds
             pkgs.black # Python code formatter
             pkgs.grpc
+            pkgs.k9s
           ];
           shellHook = ''
             export LD_LIBRARY_PATH=${pkgs.lib.makeLibraryPath [pkgs.stdenv.cc.cc]}
             export PATH="$PATH:$HOME/.local/pulumi-binaries/latest"
             export AWS_PROFILE="pulumi-ce"
             export PULUMI_HOME=$(pwd)/.pulumi
+            eval $(aws-sso-creds export)
           '';
         };
       }
